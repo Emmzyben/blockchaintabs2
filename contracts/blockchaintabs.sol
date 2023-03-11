@@ -1,46 +1,17 @@
-//SPDX-License-Identifier: MIT
+// SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
 contract blockchaintabs {
-    string private name;
-    uint256 public imageCount = 0;
-    mapping(uint256 => Image) private images;
+    string[] public ipfsHashes;
 
-    struct Image {
-        uint256 id;
-        string hash;
-        string content;
-        address author;
+    event HashAdded(string ipfsHash);
+//This function receives the url/hash from the user and stores it in the smart contract
+    function addHash(string memory _ipfsHash) public {
+        ipfsHashes.push(_ipfsHash);
+        emit HashAdded(_ipfsHash);
     }
-    Image[] newImages;
-    event ImageCreated(uint256 id, string hash, string content, address author);
-
-    function uploadImage(string memory _imgHash, string memory _content)
-        public
-    {
-        // Make sure the image hash exists
-        require(bytes(_imgHash).length > 0);
-        // Make sure image description exists
-        require(bytes(_content).length > 0);
-        // Make sure uploader address exists
-        require(msg.sender != address(0));
-
-        // Increment image id
-        imageCount++;
-
-        // Add Image to the contract
-        images[imageCount] = Image(
-            imageCount,
-            _imgHash,
-            _content,
-            address(msg.sender)
-        );
-        newImages.push(images[imageCount]);
-        // Trigger an event
-        emit ImageCreated(imageCount, _imgHash, _content, address(msg.sender));
-    }
-
-    function getData() public view returns (Image[] memory) {
-        return newImages;
+//This function gets all the url/hash stored in the smart contract and displays it.
+    function getAllHashes() public view returns (string[] memory) {
+        return ipfsHashes;
     }
 }

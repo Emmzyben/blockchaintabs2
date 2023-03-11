@@ -7,6 +7,7 @@ import {setGlobalState, getGlobalState } from './Store';
 window.web3 = new Web3(ethereum)
 window.web3 = new Web3(window.web3.currentProvider)
 
+//this function retrieves the contract for the current network and account
 const getContract = async () => {
   const connectedAccount = getGlobalState('connectedAccount')
 
@@ -25,7 +26,7 @@ const getContract = async () => {
     return getGlobalState('contract')
   }
 }
-
+//connect to the user's Ethereum wallet 
 const connectWallet = async () => {
   try {
     if (!ethereum) return alert('Please install Metamask')
@@ -35,7 +36,7 @@ const connectWallet = async () => {
     reportError(error)
   }
 }
-
+//This function checks if the user's Ethereum wallet is connected and updates the global state.
 const walletConnected = async () => {
   try {
     if (!ethereum) return alert('Please install Metamask')
@@ -61,36 +62,6 @@ const walletConnected = async () => {
   }
 }   
 
-const uploadContent = async ({ _imgHash , _content }) => {
-  try {
-   
-    const contract = await getContract()
-    console.log("contract", contract)
-    const account = getGlobalState('connectedAccount')
-   const upload =  await contract.methods.uploadImage(_imgHash, _content).send({from: account})
-   console.log("upload..", upload)
-   window.location.reload()
-
-  } catch (error) {
-    console.error(error)
-    reportError(error)
-  }
-}
-
-const getInfo = async () => {
-  try {
-   
-    const contract = await getContract()
-   const data =  await contract.methods.getData().call()
-   setGlobalState('data', data)
-   console.log("data..", data)
-
-  } catch (error) {
-    console.error(error.message)
-    reportError(error)
-  }
-}
-
 const reportError = (error) => {
   // setAlert(JSON.stringify(error), 'red')
   // throw new Error('No ethereum object.')
@@ -100,6 +71,4 @@ export {
   connectWallet,
   getContract,
   walletConnected,
-  uploadContent,
-  getInfo,
 }

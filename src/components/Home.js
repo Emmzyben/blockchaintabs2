@@ -7,16 +7,16 @@ import python_logo from '../Assets/python logo.jpg';
 import solidity_logo from '../Assets/solidity logo.png';
 import rustlogo from '../Assets/rust logo.png';
 import webtri from '../Assets/web3.jpg';
-import {create} from "ipfs-http-client"
+import { create, CID, IPFSHTTPClient } from "ipfs-http-client";
 import { Buffer } from 'buffer'
-import { getInfo, uploadContent } from "./Blockchain.Data";
 import { useGlobalState } from "./Store";
-import { connectWallet } from './Blockchain.Data'
-const auth =
-'Basic ' +
-Buffer.from(
-  "2LS0CZRSsEVgQtS6pOXZ151N09" + ':' + "https://ipfs.infura.io:5001",
-).toString('base64')
+import { connectWallet } from './Blockchain.Data';
+import {getContract} from './Blockchain.Data';
+import { walletConnected } from "./Blockchain.Data";
+import {setGlobalState, getGlobalState } from './Store';
+
+//i initialized an ipfs node using infura.
+const auth = 'Basic ' + Buffer.from('2LS0CZRSsEVgQtS6pOXZl5lN09t' + ':' + 'c4eba38c0dfaade6c6d96e8359ce0026',).toString('base64');
 
 const client = create({
     host: 'ipfs.infura.io',
@@ -29,54 +29,78 @@ const client = create({
 
   const Home = () => {
     const [data] = useGlobalState("data")
-
-    const [content, setContent] = useState('')
+    const [connectedAccount]  = useGlobalState("connectedAccount")
     const [fileLink, setFileLink] = useState('')
     const [imgPic, setImgPic] = useState(null)
+    const [textfiles, setfiles] = useState([]);
+
     
-
-
-    const [effect, setEffect] = useState(false)
-    useEffect(()=> {
-        const Data = async () => {
-            setEffect(true);
-            await getInfo()
-            };
-            Data();
-          },[])
-
-          
-    const handleSubmit = async (e) =>{
-        e.preventDefault()
-
-        if( !content ) return
-        try {
-            const created = await client.add(fileLink)
-            const URI = `https://ipfs.io/ipfs/${created.path}`
-            const upload = {URI,content}
-            console.log(upload)
-            await uploadContent({_imgHash:URI, _content:content})
-           
-        } catch (error) {
-            console.log("Error ", error)
-            
-        }
-    }
-
-
-    const changPic = async (e) =>{
-        const reader = new FileReader()
-        if(e.target.files[0]) reader.readAsDataURL(e.target.files[0])
-
-        reader.onload = (readerEvent) => {
-            const file = readerEvent.target.result
-            setImgPic(file)
-            setFileLink(e.target.files[0])
-        }
-    }
+    
+    useEffect( ()=> {
+      walletConnected()
+      getContract()
+      
+ 
+   },[])
+//stores and retrives ipfs hash/url from my smart contract.
+   const addHash = async ({_ipfsHash}) => {
+    try {
+     
+      const contract = await getContract()
+      console.log("contract", contract)
+      const account = getGlobalState('connectedAccount')
+     const upload =  await contract.methods.addHash(_ipfsHash).send({from: account})
+     console.log("upload..", upload)
+     const data = await contract.methods.getAllHashes().call()
+        console.log(data)
+  
+      
+      } catch (error) {
+        console.error(error)
+        reportError(error)
+      }
+    }  
+    //This where i handled the file submission. i uploaded a file containing an image
+    //and a text to ipfs. then converted it to url(which contains the hash). 
+    //then sent the url to my smart contract. afterwhich i seperated the file into its image and content part.
+    //then set the state using usestate. then rendered the image and text on my frontend
+    const handleSubmit = async (event) => {
+      event.preventDefault();
+      const form = event.target;
+      const files = form[0].files;
+    
+      if (!files || files.length === 0) {
+        return alert("No files selected");
+      }
+    
+      const file = files[0];
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = async () => {
+        const fileContent = reader.result;
+        const created = await client.add(file);
+        const cid = created.cid;
+        const path = created.path;
+        const URI = `https://ipfs.io/ipfs/${created.path}`;
+        const upload = { URI, fileContent };
+        console.log(upload);
+        await addHash({ _ipfsHash: URI });
+    
+        setfiles([
+          ...textfiles,
+          {
+            cid,
+            path,
+            fileContent,
+            description: form[1].value,
+          },
+        ]);
+        form.reset();
+      };
+    };
     
     return (
-
+//the frontend code
     <>
     <div className="App">
      
@@ -86,27 +110,29 @@ const client = create({
       <button id="home" onClick={connectWallet}>
     Connect wallet
     </button>
-      <input type="text" placeholder="Search.." />
+      
+    <div id='topper'>
+    {connectedAccount ? (<div >
+        {connectedAccount}</div>
+    ) : (<div  >
+       
+   </div>)}
+    </div>
+
       <div id="smallscreen">
-        <form onSubmit={handleSubmit} >
-          <textarea 
-           type='text'  
-           placeholder='post your article'
-           name='description' 
-            id="text2"
-           onChange={(e) => setContent(e.target.value)} 
-           value={content}         
-          required></textarea>
-  <div id="file2">
-     <p id="label2">Attach an image</p>
-     <input 
-      type='file' 
-     accept=' image/webp, image/png, image/gif, image/jpeg, image/jpg,'                
-    onChange={changPic}
-     required/>
+      <form onSubmit={handleSubmit} >
+  <div>
+    <label id="label2">Choose an image:</label>
+    <input type="file" accept=".txt,.jpg,.jpeg,.png" id="file2" required />
   </div>
-      <button type="submit" id="subm2"> submit  </button>
-      </form>
+  <div>
+    <textarea id="description" placeholder="post your article here" className="text2"  required></textarea>
+  </div>
+  <button type="submit" id="subm2">Submit</button>
+</form>
+
+
+
       </div>
       <p id="notice">Post an article and share your knowledge with the blockchain community</p>
     </header>
@@ -145,26 +171,30 @@ const client = create({
           Share your knowledge with the community!
         </h4>
      </div>
+
      <form onSubmit={handleSubmit} id="modal">
-          <textarea 
-           type='text'  
-           placeholder='post your article'
-           name='description'   
-           onChange={(e) => setContent(e.target.value)} 
-           value={content}         
-          required></textarea>
-  <div id="file">
-     <label >Attach image</label>
-     <input 
-      type='file' 
-     accept=' image/webp, image/png, image/gif, image/jpeg, image/jpg,'                
-    onChange={changPic}
-     required/>
+  <div>
+    <label>Attach an image:</label>
+    <input type="file" accept=".txt,.jpg,.jpeg,.png" id="file" required />
   </div>
-      <button type="submit" id="subm"> submit  </button>
-      </form>
+  <div>
+    <textarea id="description" placeholder="post your article here" required></textarea>
+  </div>
+  <button type="submit" id="subm">Submit</button>
+</form>
+
+
+
     </section>
 <article>
+<div className="parent">
+  {textfiles.map((file, index) => (
+    <div key={file.cid.toString() + index} className="display">
+      <img src={file.fileContent} alt={`File ${index + 1}`}  />
+      <p> <strong>post-{index + 1}</strong> : {file.description}</p>
+    </div>
+  ))}
+</div>
 
 </article>
       </div>

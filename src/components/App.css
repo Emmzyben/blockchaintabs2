@@ -35,7 +35,14 @@ header{
 #home{
   height: 21px;
   position: absolute;
-  left: 23%;
+  right: 5%;
+  bottom: 4px;
+}
+
+#topper {
+  height: 21px;
+  position: absolute;
+  right: 30%;
   bottom: 4px;
 }
 
@@ -231,10 +238,15 @@ z-index: -1;
 article{
 float: right;
 margin-right: 20%;
-background-color:whitesmoke;
-height: 5000px;
-width: 60%;
+margin-top: 7%;
+width: 55%;
+height: 7000px;
 }
+#view{
+  width: 80%;
+  
+}
+
 section{
 position: fixed;
 right: 0;
@@ -247,7 +259,7 @@ right: 0;
 
 textarea{
 position: fixed;
-top: 35%;
+top: 40%;
 right: 2%;
 height:40% ;
 width: 40%;
@@ -259,18 +271,18 @@ min-height: 200px;
 #file{
 position: fixed;
 right: 2%;
-top: 69%;
+top: 75%;
 width: 200px;
 }
 label{
 position: fixed;
-right: 10%;
-bottom: 32%; 
+right: 9%;
+bottom: 26%; 
 }
 #subm{
 position: fixed;
 right:6%;
-top: 75%;
+top:80%;
 background-color: rgb(224, 55, 55);
 color: white;
 font-size: 15px;
@@ -300,6 +312,28 @@ height: 30px;
   margin: 5px;
 }
 
+.display {
+  border: 1px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.display img {
+  width: 40%;
+  height: 40%;
+}
+
+strong{
+  color: rgb(236, 100, 100);
+}
+
+.parent {
+  position: relative;
+  top: -20px;
+  left: -60px;
+  z-index: -1;
+}
+
 #smallscreen{
   display: none;
 }
@@ -308,8 +342,10 @@ height: 30px;
 }
 @media screen and (max-width: 1000px) {
 article{
+  margin-top: 45%;
+}
+#view{
   width: 100%;
-  margin: 0;
 }
 nav{
   display: none;
@@ -338,7 +374,7 @@ header{
   position: fixed;
   top: 2%;
 }
-#text2{
+.text2{
   display: block;
   position: fixed;
   top: 9%;
@@ -353,20 +389,19 @@ min-height: 50px;
 #file2{
   position: fixed;
   left: 4%;
-  top: 19.5%;
+  top: 21%;
   width: 100px;
 }
 #label2{
   position: fixed;
   left: 4%;
-  top: 15.5%;
-  font-size: 12px;
+  top: 17%;
  color: rgb(230, 74, 74);
 }
 #subm2{
   position: fixed;
   left: 4%;
-  top: 24%;
+  top: 25%;
 }
 #notice{
   display: block;
@@ -374,7 +409,34 @@ min-height: 50px;
   font-size: 14px;
   position: fixed;
   right: 5%;
-  top: 15%;
+  top: 13%;
   color: rgb(230, 74, 74);
+}
+
+#topper {
+  height: 21px;
+  position: absolute;
+  right: 0%;
+  bottom: 5px;
+  font-size: 12px;
+}
+
+.parent {
+  position: relative;
+  top: 20px;
+  left: -60px;
+}
+
+.display {
+  border-bottom: 1px solid #ccc;
+  border-top: 0px solid #ccc;
+  border-right: 0px solid #ccc;
+  border-left: 0px solid #ccc;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+.display img {
+  width: 70%;
+  height: 40%;
 }
 }
