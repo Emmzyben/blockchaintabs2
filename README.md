@@ -7,3 +7,6 @@ The magazine website will be a great resource destination for blockchain enthusi
 4. ipfs : to store files and contents
 5. Truffle : for compiling ,testing and deploying of smart contract.
 
+To run,clone my repo and install dependencies using npm install.
+install truffle and deploy the smart contract from your vs code.
+connect your metamask wallet to access the app and the smart contract.
