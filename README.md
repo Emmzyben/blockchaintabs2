@@ -8,5 +8,7 @@ The magazine website will be a great resource destination for blockchain enthusi
 5. Truffle : for compiling ,testing and deploying of smart contract.
 
 To run,clone my repo and install dependencies using npm install.
-install truffle and deploy the smart contract from your vs code.
+install truffle for compiling and deploying the smart contract from your vs code.
+install ganache cli as your local blockchain network.
+deploy the smart contract to ganache using truffle.
 connect your metamask wallet to access the app and the smart contract.
