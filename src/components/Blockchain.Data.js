@@ -1,13 +1,10 @@
 import Web3 from 'web3';
 import abi from "../abis/blockchaintabs.json"
 import {setGlobalState, getGlobalState } from './Store';
-
-
- const { ethereum } = window
+const { ethereum } = window
 window.web3 = new Web3(ethereum)
 window.web3 = new Web3(window.web3.currentProvider)
 
-//this function retrieves the contract for the current network and account
 const getContract = async () => {
   const connectedAccount = getGlobalState('connectedAccount')
 
@@ -26,6 +23,8 @@ const getContract = async () => {
     return getGlobalState('contract')
   }
 }
+
+
 //connect to the user's Ethereum wallet 
 const connectWallet = async () => {
   try {
