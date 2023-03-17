@@ -321,6 +321,8 @@ height: 30px;
 .display img {
   width: 40%;
   height: 40%;
+  position: relative;
+  left: 30%;
 }
 
 strong{
