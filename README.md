@@ -10,4 +10,5 @@ The magazine website will be a great resource destination for blockchain enthusi
 
 To run,clone my repo and install dependencies using npm install.
 you also need to have some goerli coins because the smart contract was deployed in goerli testnet.
-#To view the website live log on to blockchaintabs2.vercel.app
+#To view the website live log on to: 
+blockchaintabs2.vercel.app
