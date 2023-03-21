@@ -39,9 +39,9 @@ const client = create({
     useEffect( ()=> {
       walletConnected()
       getContract()
-      
- 
-   },[])
+  },[])
+
+  
 //stores and retrives ipfs hash/url from my smart contract.
    const addHash = async ({_ipfsHash}) => {
     try {
@@ -96,6 +96,7 @@ const client = create({
           },
         ]);
         form.reset();
+        alert("post created!")
       };
     };
     
